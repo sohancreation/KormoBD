@@ -1,0 +1,6 @@
+{
+  "name": "KormoAI - AI-Powered Job & Recruitment Platform",
+  "description": "Modern AI-first job discovery and recruitment platform with automated resume parsing, candidate ranking, custom screening questions, and intelligent hiring workflows.",
+  "requestFramePermissions": [],
+  "majorCapabilities": ["MAJOR_CAPABILITY_SERVER_SIDE_GEMINI_API"]
+}
