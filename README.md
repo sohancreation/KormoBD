@@ -34,24 +34,35 @@ Open **[http://localhost:3000](http://localhost:3000)** in your browser.
 
 ---
 
+## 🌐 Deploy to Netlify (1-Click & Git Continuous Deployment)
+
+This repository is pre-configured with `netlify.toml`, Netlify Functions, and SPA redirects.
+
+### Step-by-Step Deployment:
+
+1. **Log in to [Netlify](https://app.netlify.com/)**.
+2. Click **"Add new site"** → **"Import an existing project"**.
+3. Choose **GitHub** and select your repository: **`sohancreation/kormobd`**.
+4. The build settings are auto-detected from `netlify.toml`:
+   - **Base directory:** *(leave blank)*
+   - **Build command:** `npm run build`
+   - **Publish directory:** `dist`
+   - **Functions directory:** `netlify/functions`
+5. **Environment Variables**:
+   Under **Site configuration** → **Environment variables**, click **Add a variable**:
+   - Key: `GEMINI_API_KEY`
+   - Value: `AIzaSy...` *(your Gemini API key)*
+6. Click **Deploy kormobd**.
+
+Your site and serverless Gemini AI functions will be live with an automatic `https://your-site.netlify.app` URL and custom domain support!
+
+---
+
 ## 🏗️ Architecture Overview
 
-KormoAI runs a full-stack architecture pairing an **Express.js** backend with **Vite + React 19** frontend:
-
-1. **Backend Server (`server.ts`)**:
-   - Runs an Express server with Vite dev middleware on port `3000`.
-   - Safely loads `GEMINI_API_KEY` via `dotenv` in the Node environment.
-   - Hosts secure server-side AI endpoints under `/api/ai/*`.
-
-2. **Frontend Client (`src/services/aiService.ts`)**:
-   - Calls the backend `/api/ai/*` endpoints over standard JSON HTTP requests.
-   - Includes graceful client heuristics and fallbacks if offline or running without an API key.
-
-3. **Production Build**:
-   ```bash
-   npm run build
-   npm start
-   ```
+KormoAI runs a dual architecture:
+- **Localhost Development**: Express backend (`server.ts`) with Vite dev middleware on port `3000`.
+- **Netlify Cloud Hosting**: Vite static SPA distribution (`dist/`) paired with serverless Express functions (`netlify/functions/api.ts`) managing all `/api/ai/*` requests.
 
 ---
 
