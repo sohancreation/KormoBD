@@ -6,7 +6,27 @@ import { app } from './src/apiApp';
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
 
-const PORT = process.env.PORT ? parseInt(process.env.PORT, 10) : 3000;
+const DEFAULT_PORT = process.env.PORT ? parseInt(process.env.PORT, 10) : 3000;
+
+function startListening(port: number, maxAttempts = 5) {
+  const server = app.listen(port, '0.0.0.0', () => {
+    const hasKey = Boolean(process.env.GEMINI_API_KEY && process.env.GEMINI_API_KEY !== 'MY_GEMINI_API_KEY');
+    console.log(`\n======================================================`);
+    console.log(`🚀 KormoAI Full-Stack Server Running on http://localhost:${port}`);
+    console.log(`🔑 Gemini Status: ${hasKey ? 'ACTIVE (Server Key Loaded)' : 'FALLBACK SIMULATION (No key in .env)'}`);
+    console.log(`🌐 Environment: ${process.env.NODE_ENV || 'development'}`);
+    console.log(`======================================================\n`);
+  });
+
+  server.on('error', (err: any) => {
+    if (err.code === 'EADDRINUSE' && maxAttempts > 0) {
+      console.warn(`[Server] Port ${port} is currently in use, trying port ${port + 1}...`);
+      startListening(port + 1, maxAttempts - 1);
+    } else {
+      console.error('[Server] Listen error:', err);
+    }
+  });
+}
 
 async function startServer() {
   const isProduction = process.env.NODE_ENV === 'production';
@@ -29,14 +49,7 @@ async function startServer() {
     });
   }
 
-  app.listen(PORT, '0.0.0.0', () => {
-    const hasKey = Boolean(process.env.GEMINI_API_KEY && process.env.GEMINI_API_KEY !== 'MY_GEMINI_API_KEY');
-    console.log(`\n======================================================`);
-    console.log(`🚀 KormoAI Full-Stack Server Running on http://localhost:${PORT}`);
-    console.log(`🔑 Gemini Status: ${hasKey ? 'ACTIVE (Server Key Loaded)' : 'FALLBACK SIMULATION (No key in .env)'}`);
-    console.log(`🌐 Environment: ${process.env.NODE_ENV || 'development'}`);
-    console.log(`======================================================\n`);
-  });
+  startListening(DEFAULT_PORT);
 }
 
 startServer().catch((err) => {
